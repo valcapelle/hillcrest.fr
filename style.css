@@ -182,7 +182,18 @@ h3 { font-size: clamp(1.1rem, 1.8vw, 1.3rem); }
 }
 
 /* Logo */
-.logo { z-index: 101; }
+.logo {
+    z-index: 101;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+}
+.logo-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 .logo-text {
     font-family: var(--ff-heading);
     font-size: 1.25rem;
