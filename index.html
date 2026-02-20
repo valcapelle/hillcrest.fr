@@ -325,6 +325,15 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-submit">Demander un entretien gratuit</button>
                         <div id="form-result" class="form-result" aria-live="polite"></div>
+                        <div id="form-success" class="form-success" aria-live="polite">
+                            <div class="form-success-inner">
+                                <div class="form-success-icon">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                </div>
+                                <h3>Demande envoyée&nbsp;!</h3>
+                                <p>Votre demande a bien été envoyée. Nous vous recontacterons très prochainement pour organiser votre entretien.</p>
+                            </div>
+                        </div>
                     </form>
                     <aside class="contact-aside reveal" style="--delay: 0.2s">
                         <div class="contact-info-card">
@@ -439,6 +448,8 @@
                 e.preventDefault();
                 var btn = contactForm.querySelector('.btn-submit');
                 var result = document.getElementById('form-result');
+                var successOverlay = document.getElementById('form-success');
+                var sent = false;
                 btn.disabled = true;
                 btn.textContent = 'Envoi en cours…';
                 result.className = 'form-result';
@@ -450,9 +461,9 @@
                     });
                     var data = await res.json();
                     if (data.success) {
-                        result.classList.add('form-result--success');
-                        result.textContent = 'Votre demande a bien été envoyée. Nous vous recontacterons très prochainement.';
+                        sent = true;
                         contactForm.reset();
+                        successOverlay.classList.add('is-visible');
                     } else {
                         throw new Error(data.message);
                     }
@@ -460,8 +471,10 @@
                     result.classList.add('form-result--error');
                     result.textContent = 'Une erreur est survenue. Veuillez réessayer ou nous écrire directement à hillcrest.france@gmail.com.';
                 } finally {
-                    btn.disabled = false;
-                    btn.textContent = 'Demander un entretien gratuit';
+                    if (!sent) {
+                        btn.disabled = false;
+                        btn.textContent = 'Demander un entretien gratuit';
+                    }
                 }
             });
         }
