@@ -764,6 +764,26 @@ h3 { font-size: clamp(1.1rem, 1.8vw, 1.3rem); }
     margin-top: .5rem;
 }
 
+.form-result {
+    display: none;
+    padding: .875rem 1rem;
+    border-radius: var(--radius);
+    font-size: .9rem;
+    margin-top: 1rem;
+}
+.form-result--success {
+    display: block;
+    background: #f0faf4;
+    color: #1a7a45;
+    border: 1px solid #b6e8cb;
+}
+.form-result--error {
+    display: block;
+    background: #fff4f4;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
 /* Contact aside */
 .contact-info-card {
     background: var(--parchment);

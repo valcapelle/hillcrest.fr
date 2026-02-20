@@ -245,7 +245,11 @@
                     <h2 class="section-title">Parlons de votre projet</h2>
                 </div>
                 <div class="contact-grid">
-                    <form class="contact-form reveal" action="mailto:contact@hillcrest.fr" method="post" enctype="text/plain" style="--delay: 0.1s">
+                    <form class="contact-form reveal" id="contact-form" action="https://api.web3forms.com/submit" method="POST" style="--delay: 0.1s">
+                        <input type="hidden" name="access_key" value="be07d035-8ebc-41cb-bc7d-a96fa1de3003">
+                        <input type="hidden" name="subject" value="Nouvelle demande d'entretien - Hillcrest">
+                        <input type="hidden" name="from_name" value="Formulaire Hillcrest">
+                        <input type="checkbox" name="botcheck" style="display:none">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="student-name">Prénom et nom de l'élève</label>
@@ -320,13 +324,14 @@
                             <textarea id="message" name="message" rows="4"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-submit">Demander un entretien gratuit</button>
+                        <div id="form-result" class="form-result" aria-live="polite"></div>
                     </form>
                     <aside class="contact-aside reveal" style="--delay: 0.2s">
                         <div class="contact-info-card">
                             <h3>Contactez-nous</h3>
                             <div class="contact-detail">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                                <a href="mailto:chillcrest.france@gmail.com">hillcrest.france@gmail.com</a>
+                                <a href="mailto:hillcrest.france@gmail.com">hillcrest.france@gmail.com</a>
                             </div>
                             <div class="contact-detail">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -426,6 +431,40 @@
         document.querySelectorAll('.reveal').forEach(function (el) {
             io.observe(el);
         });
+
+        /* --- Contact form (Web3Forms) --- */
+        var contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                var btn = contactForm.querySelector('.btn-submit');
+                var result = document.getElementById('form-result');
+                btn.disabled = true;
+                btn.textContent = 'Envoi en cours…';
+                result.className = 'form-result';
+                result.textContent = '';
+                try {
+                    var res = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        body: new FormData(contactForm)
+                    });
+                    var data = await res.json();
+                    if (data.success) {
+                        result.classList.add('form-result--success');
+                        result.textContent = 'Votre demande a bien été envoyée. Nous vous recontacterons très prochainement.';
+                        contactForm.reset();
+                    } else {
+                        throw new Error(data.message);
+                    }
+                } catch (err) {
+                    result.classList.add('form-result--error');
+                    result.textContent = 'Une erreur est survenue. Veuillez réessayer ou nous écrire directement à hillcrest.france@gmail.com.';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Demander un entretien gratuit';
+                }
+            });
+        }
     })();
     </script>
 
